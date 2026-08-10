@@ -7,4 +7,6 @@ export type BurgerConstructorUIProps = {
   orderModalData: TOrder | null;
   onOrderClick: () => void;
   closeOrderModal: () => void;
+  handleDrop: (event: DragEvent<HTMLElement>) => void;
 };
+import { DragEvent } from 'react';

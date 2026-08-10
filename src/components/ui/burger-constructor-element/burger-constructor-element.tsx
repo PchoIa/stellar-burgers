@@ -12,9 +12,17 @@ export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
       totalItems,
       handleMoveUp,
       handleMoveDown,
-      handleClose
+      handleClose,
+      handleDragStart,
+      handleDrop
     }) => (
-      <li className={`${styles.element} mb-4 mr-2`}>
+      <li
+        className={`${styles.element} mb-4 mr-5`}
+        draggable
+        onDragStart={handleDragStart}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={handleDrop}
+      >
         <MoveButton
           handleMoveDown={handleMoveDown}
           handleMoveUp={handleMoveUp}

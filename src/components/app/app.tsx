@@ -1,33 +1,123 @@
-import { ConstructorPage } from '@pages';
+import { ReactNode, useEffect } from 'react';
+import {
+  Location,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate
+} from 'react-router-dom';
+import {
+  ConstructorPage,
+  Feed,
+  ForgotPassword,
+  Login,
+  NotFound404,
+  Profile,
+  ProfileOrders,
+  Register,
+  ResetPassword
+} from '@pages';
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import { ProtectedRoute } from '../protected-route/protected-route';
+import { useAppDispatch } from '../../services/store';
+import { authCheckFinished, fetchUser } from '../../services/slices/userSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import '../../index.css';
 import styles from './app.module.css';
 
-import { AppHeader } from '@components';
-import { Preloader } from '@ui';
+const AppLayout = () => (
+  <div className={styles.app}>
+    <AppHeader />
+    <Outlet />
+  </div>
+);
 
-const App = () => {
-  /** TODO: взять переменные из стора */
-  const isIngredientsLoading = false;
-  const ingredients = [];
-  const error = null;
+const ModalRoute = ({
+  children,
+  title
+}: {
+  children: ReactNode;
+  title: string;
+}) => {
+  const navigate = useNavigate();
 
   return (
-    <div className={styles.app}>
-      <AppHeader />
-      {isIngredientsLoading ? (
-        <Preloader />
-      ) : error ? (
-        <div className={`${styles.error} text text_type_main-medium pt-4`}>
-          {error}
-        </div>
-      ) : ingredients.length > 0 ? (
-        <ConstructorPage />
-      ) : (
-        <div className={`${styles.title} text text_type_main-medium pt-4`}>
-          Нет игредиентов
-        </div>
+    <Modal title={title} onClose={() => navigate(-1)}>
+      {children}
+    </Modal>
+  );
+};
+
+const App = () => {
+  const dispatch = useAppDispatch();
+  const location = useLocation();
+  const backgroundLocation = location.state?.background as Location | undefined;
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+    if (localStorage.getItem('refreshToken')) {
+      dispatch(fetchUser());
+    } else {
+      dispatch(authCheckFinished());
+    }
+  }, [dispatch]);
+
+  return (
+    <>
+      <Routes location={backgroundLocation || location}>
+        <Route path='/' element={<AppLayout />}>
+          <Route index element={<ConstructorPage />} />
+          <Route path='feed' element={<Feed />} />
+          <Route path='feed/:number' element={<OrderInfo />} />
+          <Route path='ingredients/:id' element={<IngredientDetails />} />
+          <Route element={<ProtectedRoute onlyUnAuth />}>
+            <Route path='login' element={<Login />} />
+            <Route path='register' element={<Register />} />
+            <Route path='forgot-password' element={<ForgotPassword />} />
+            <Route path='reset-password' element={<ResetPassword />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path='profile'>
+              <Route index element={<Profile />} />
+              <Route path='orders' element={<ProfileOrders />} />
+              <Route path='orders/:number' element={<OrderInfo />} />
+            </Route>
+          </Route>
+          <Route path='*' element={<NotFound404 />} />
+        </Route>
+      </Routes>
+      {backgroundLocation && (
+        <Routes>
+          <Route
+            path='/ingredients/:id'
+            element={
+              <ModalRoute title='Детали ингредиента'>
+                <IngredientDetails />
+              </ModalRoute>
+            }
+          />
+          <Route
+            path='/feed/:number'
+            element={
+              <ModalRoute title='Информация о заказе'>
+                <OrderInfo />
+              </ModalRoute>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <ProtectedRoute>
+                <ModalRoute title='Информация о заказе'>
+                  <OrderInfo />
+                </ModalRoute>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       )}
-    </div>
+    </>
   );
 };
 
