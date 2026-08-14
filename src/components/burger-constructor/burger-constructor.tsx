@@ -4,7 +4,6 @@ import { TConstructorIngredient, TOrder } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import {
-  clearConstructor,
   closeOrderModal,
   createOrder,
   addIngredient,
@@ -47,7 +46,6 @@ export const BurgerConstructor: FC = () => {
 
   const handleCloseOrderModal = () => {
     dispatch(closeOrderModal());
-    dispatch(clearConstructor());
   };
 
   const handleDrop = (event: React.DragEvent<HTMLElement>) => {

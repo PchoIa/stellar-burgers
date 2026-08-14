@@ -14,10 +14,10 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     const location = useLocation();
 
     const dispatch = useAppDispatch();
-    const constructor = useAppSelector(selectConstructor);
+    const constructorState = useAppSelector(selectConstructor);
 
-    const bun = constructor?.bun ?? null;
-    const constructorIngredients = constructor?.ingredients ?? [];
+    const bun = constructorState?.bun ?? null;
+    const constructorIngredients = constructorState?.ingredients ?? [];
     const count =
       (bun?._id === ingredient._id ? 2 : 0) +
       constructorIngredients.filter((item) => item._id === ingredient._id)

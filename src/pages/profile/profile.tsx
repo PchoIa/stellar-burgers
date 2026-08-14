@@ -28,23 +28,37 @@ export const Profile: FC = () => {
     formValue.email !== profileUser.email ||
     !!formValue.password;
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const data: Partial<{ name: string; email: string; password: string }> = {};
+    const updatedFields: Partial<{
+      name: string;
+      email: string;
+      password: string;
+    }> = {};
 
     if (formValue.name !== profileUser.name) {
-      data.name = formValue.name;
+      updatedFields.name = formValue.name;
     }
 
     if (formValue.email !== profileUser.email) {
-      data.email = formValue.email;
+      updatedFields.email = formValue.email;
     }
 
     if (formValue.password) {
-      data.password = formValue.password;
+      updatedFields.password = formValue.password;
     }
 
-    dispatch(updateUser(data));
+    try {
+      const updatedUser = await dispatch(updateUser(updatedFields)).unwrap();
+
+      setFormValue({
+        name: updatedUser.name,
+        email: updatedUser.email,
+        password: ''
+      });
+    } catch {
+      return;
+    }
   };
 
   const handleCancel = (e: SyntheticEvent) => {

@@ -5,7 +5,8 @@ import {
   Route,
   Routes,
   useLocation,
-  useNavigate
+  useNavigate,
+  useParams
 } from 'react-router-dom';
 import {
   ConstructorPage,
@@ -46,6 +47,17 @@ const ModalRoute = ({
     <Modal title={title} onClose={() => navigate(-1)}>
       {children}
     </Modal>
+  );
+};
+
+const OrderModalRoute = () => {
+  const { number = '' } = useParams();
+  const title = `#${number.padStart(6, '0')}`;
+
+  return (
+    <ModalRoute title={title}>
+      <OrderInfo />
+    </ModalRoute>
   );
 };
 
@@ -97,21 +109,12 @@ const App = () => {
               </ModalRoute>
             }
           />
-          <Route
-            path='/feed/:number'
-            element={
-              <ModalRoute title='Информация о заказе'>
-                <OrderInfo />
-              </ModalRoute>
-            }
-          />
+          <Route path='/feed/:number' element={<OrderModalRoute />} />
           <Route
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <ModalRoute title='Информация о заказе'>
-                  <OrderInfo />
-                </ModalRoute>
+                <OrderModalRoute />
               </ProtectedRoute>
             }
           />

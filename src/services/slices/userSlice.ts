@@ -87,6 +87,8 @@ export const fetchUser = createAsyncThunk<TUser, void, { rejectValue: string }>(
       const response = await getUserApi();
       return response.user;
     } catch (error) {
+      clearTokens();
+
       return rejectWithValue(getError(error));
     }
   }
@@ -203,7 +205,6 @@ const userSlice = createSlice({
         state.error = action.payload || 'Ошибка выхода';
       })
       .addCase(fetchUser.rejected, (state, action) => {
-        clearTokens();
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
