@@ -6,4 +6,6 @@ export type TBurgerIngredientUIProps = {
   count: number;
   locationState: { background: Location };
   handleAdd: () => void;
+  handleDragStart: (event: DragEvent<HTMLLIElement>) => void;
 };
+import { DragEvent } from 'react';

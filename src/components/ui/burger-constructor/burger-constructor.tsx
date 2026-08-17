@@ -16,11 +16,16 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   price,
   orderModalData,
   onOrderClick,
-  closeOrderModal
+  closeOrderModal,
+  handleDrop
 }) => (
-  <section className={styles.burger_constructor}>
+  <section
+    className={styles.burger_constructor}
+    onDragOver={(event) => event.preventDefault()}
+    onDrop={handleDrop}
+  >
     {constructorItems.bun ? (
-      <div className={`${styles.element} mb-4 mr-4`}>
+      <div className={`${styles.element} mb-4 mr-5`}>
         <ConstructorElement
           type='top'
           isLocked
@@ -36,7 +41,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         Выберите булки
       </div>
     )}
-    <ul className={styles.elements}>
+    <ul className={`${styles.elements} mb-4`}>
       {constructorItems.ingredients.length > 0 ? (
         constructorItems.ingredients.map(
           (item: TConstructorIngredient, index: number) => (
@@ -50,14 +55,14 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         )
       ) : (
         <div
-          className={`${styles.noBuns} ml-8 mb-4 mr-5 text text_type_main-default`}
+          className={`${styles.noBuns} ml-8 mr-5 text text_type_main-default`}
         >
           Выберите начинку
         </div>
       )}
     </ul>
     {constructorItems.bun ? (
-      <div className={`${styles.element} mt-4 mr-4`}>
+      <div className={`${styles.element} mr-5 mb-4`}>
         <ConstructorElement
           type='bottom'
           isLocked
